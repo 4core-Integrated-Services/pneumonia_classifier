@@ -1,0 +1,34 @@
+# ============================================
+# Pneumonia X-Ray Classifier Configuration
+# ============================================
+
+data:
+  root_dir: "./data/chest_xray"
+  img_size: 224
+  batch_size: 32
+  num_workers: 4
+
+model:
+  architecture: "resnet18"
+  pretrained: true
+  num_classes: 1          # Binary classification (sigmoid output)
+  dropout: 0.3
+
+training:
+  epochs: 25
+  learning_rate: 1.0e-4    # Best found via search over [1e-2, 1e-3, 1e-4, 1e-5]
+  weight_decay: 1.0e-4
+  scheduler: "cosine"
+  early_stopping_patience: 5
+
+class_weights:
+  normal: 1.94             # 3875 pneumonia / 1341 normal ≈ 2.89 ratio
+  pneumonia: 0.67          # Inverse frequency weighting
+
+reproducibility:
+  seed: 42
+  deterministic: true
+
+logging:
+  experiment_name: "pneumonia-resnet18"
+  tracking_uri: "./mlruns"
